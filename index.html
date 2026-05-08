@@ -700,7 +700,7 @@
 <!-- STANDARDS -->
 <div class="tab-panel" id="panel-standards">
   <div class="standards-grid">
-    <div class="std-card"><h3>📌 IEEE C57.104-2008 — DGA Condition Limits (ppm)</h3>
+    <div class="std-card" style="grid-column: 1 / -1;"><h3>📌 IEEE C57.104-2008 — DGA Condition Limits (ppm)</h3>
       <table class="std-table">
         <tbody><tr><th>Gas</th><th class="c1">C1 (Normal)</th><th class="c2">C2 (Caution)</th><th class="c3">C3 (Warning)</th><th class="c4">C4 (Critical)</th></tr>
         <tr><td>H₂</td><td class="c1">≤ 100</td><td class="c2">101–700</td><td class="c3">701–1800</td><td class="c4">&gt;1800</td></tr>
@@ -762,6 +762,61 @@
         <tr><td>0–2%</td><td class="c1">Dry Paper</td></tr><tr><td>2–4%</td><td class="c2">Wet Paper</td></tr>
         <tr><td>&gt;4%</td><td class="c4">Extremely Wet</td></tr>
       </tbody></table>
+    </div>
+    <div class="std-card" style="grid-column: 1 / -1;">
+      <h3>📐 Duval Triangle 1 — IEC 60599:2007 Fault Zone Diagram</h3>
+      <div style="display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap;">
+        <svg viewBox="0 0 460 430" width="420" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0;border:1px solid #e5e7eb;border-radius:6px;background:#fafafa;">
+          <polygon points="194,69 20,400 304,400 208,218 240,157" fill="#991b1b" opacity="0.88"></polygon>
+          <polygon points="240,157 208,218 304,400 368,400" fill="#dc2626" opacity="0.88"></polygon>
+          <polygon points="224,126 368,400 404,400 242,92" fill="#ea580c" opacity="0.88"></polygon>
+          <polygon points="312,225 404,400 420,400 320,210" fill="#f97316" opacity="0.88"></polygon>
+          <polygon points="260,96 252,111 312,225 320,210" fill="#d97706" opacity="0.88"></polygon>
+          <polygon points="194,69 216,28 224,28 260,96 252,111 242,92 224,126" fill="#ca8a04" opacity="0.82"></polygon>
+          <polygon points="220,20 216,28 224,28" fill="#9333ea" opacity="0.90"></polygon>
+          <polygon points="220,20 20,400 420,400" fill="none" stroke="#374151" stroke-width="2"></polygon>
+          <line x1="194" y1="69" x2="304" y2="400" stroke="#fff" stroke-width="0.8" stroke-dasharray="3,3" opacity="0.6"></line>
+          <line x1="240" y1="157" x2="368" y2="400" stroke="#fff" stroke-width="0.8" stroke-dasharray="3,3" opacity="0.6"></line>
+          <line x1="224" y1="126" x2="404" y2="400" stroke="#fff" stroke-width="0.8" stroke-dasharray="3,3" opacity="0.6"></line>
+          <line x1="242" y1="92" x2="404" y2="400" stroke="#fff" stroke-width="0.8" stroke-dasharray="3,3" opacity="0.6"></line>
+          <line x1="260" y1="96" x2="320" y2="210" stroke="#fff" stroke-width="0.8" stroke-dasharray="3,3" opacity="0.6"></line>
+          <line x1="208" y1="218" x2="240" y2="157" stroke="#fff" stroke-width="0.8" stroke-dasharray="3,3" opacity="0.6"></line>
+          <text x="105" y="330" text-anchor="middle" fill="white" font-size="14" font-weight="bold" font-family="sans-serif">D1</text>
+          <text x="105" y="348" text-anchor="middle" fill="white" font-size="9" font-family="sans-serif">Low Energy</text>
+          <text x="270" y="305" text-anchor="middle" fill="white" font-size="13" font-weight="bold" font-family="sans-serif">D2</text>
+          <text x="270" y="320" text-anchor="middle" fill="white" font-size="9" font-family="sans-serif">High Energy</text>
+          <text x="310" y="262" text-anchor="middle" fill="white" font-size="12" font-weight="bold" font-family="sans-serif">DT</text>
+          <text x="310" y="276" text-anchor="middle" fill="white" font-size="9" font-family="sans-serif">Mixed</text>
+          <text x="368" y="315" text-anchor="middle" fill="white" font-size="12" font-weight="bold" font-family="sans-serif">T3</text>
+          <text x="368" y="329" text-anchor="middle" fill="white" font-size="9" font-family="sans-serif">&gt;700°C</text>
+          <text x="285" y="165" text-anchor="middle" fill="white" font-size="12" font-weight="bold" font-family="sans-serif">T2</text>
+          <text x="285" y="179" text-anchor="middle" fill="white" font-size="9" font-family="sans-serif">300–700°C</text>
+          <text x="228" y="82" text-anchor="middle" fill="white" font-size="11" font-weight="bold" font-family="sans-serif">T1</text>
+          <text x="228" y="95" text-anchor="middle" fill="white" font-size="8" font-family="sans-serif">&lt;300°C</text>
+          <text x="220" y="34" text-anchor="middle" fill="white" font-size="8" font-weight="bold" font-family="sans-serif">PD</text>
+          <text x="183" y="62" text-anchor="end" fill="#374151" font-size="9" font-family="sans-serif">C₂H₂=13%</text>
+          <text x="153" y="137" text-anchor="end" fill="#374151" font-size="9" font-family="sans-serif">C₂H₂=29%</text>
+          <text x="243" y="86" text-anchor="start" fill="#374151" font-size="9" font-family="sans-serif">C₂H₄=15%</text>
+          <text x="254" y="104" text-anchor="start" fill="#374151" font-size="9" font-family="sans-serif">C₂H₄=20%</text>
+          <text x="316" y="220" text-anchor="start" fill="#374151" font-size="9" font-family="sans-serif">C₂H₄=50%</text>
+          <text x="220" y="14" text-anchor="middle" fill="#1d4ed8" font-size="13" font-weight="bold" font-family="sans-serif">CH₄</text>
+          <text x="8" y="416" text-anchor="start" fill="#1d4ed8" font-size="13" font-weight="bold" font-family="sans-serif">C₂H₂</text>
+          <text x="452" y="416" text-anchor="end" fill="#1d4ed8" font-size="13" font-weight="bold" font-family="sans-serif">C₂H₄</text>
+          <text x="100" y="413" text-anchor="middle" fill="#6b7280" font-size="9" font-family="sans-serif">← %C₂H₂ increases</text>
+          <text x="345" y="413" text-anchor="middle" fill="#6b7280" font-size="9" font-family="sans-serif">%C₂H₄ increases →</text>
+          <text x="138" y="195" text-anchor="middle" fill="#6b7280" font-size="9" font-family="sans-serif" transform="rotate(-60,138,195)">%CH₄ increases →</text>
+        </svg>
+        <div style="font-size:11px;line-height:1.7;">
+          <div style="font-weight:600;margin-bottom:6px;color:var(--text);">Zone Definitions (IEC 60599:2007)</div>
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;"><span style="display:inline-block;width:14px;height:14px;background:#9333ea;border-radius:2px;"></span> <b>PD</b> — Corona/Partial Discharge (CH₄≥98%)</div>
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;"><span style="display:inline-block;width:14px;height:14px;background:#ca8a04;border-radius:2px;"></span> <b>T1</b> — Low Temp Thermal (&lt;300°C)</div>
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;"><span style="display:inline-block;width:14px;height:14px;background:#d97706;border-radius:2px;"></span> <b>T2</b> — Thermal Fault (300–700°C)</div>
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;"><span style="display:inline-block;width:14px;height:14px;background:#f97316;border-radius:2px;"></span> <b>T3</b> — High Temp Thermal (&gt;700°C)</div>
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;"><span style="display:inline-block;width:14px;height:14px;background:#ea580c;border-radius:2px;"></span> <b>DT</b> — Mixed Elec+Thermal Fault</div>
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;"><span style="display:inline-block;width:14px;height:14px;background:#dc2626;border-radius:2px;"></span> <b>D2</b> — High Energy Discharge (Arcing)</div>
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:10px;"><span style="display:inline-block;width:14px;height:14px;background:#991b1b;border-radius:2px;"></span> <b>D1</b> — Low Energy Discharge</div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
