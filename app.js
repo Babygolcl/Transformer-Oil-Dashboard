@@ -959,8 +959,18 @@ function getRec(d,type) {
         <b>สาเหตุ:</b> Moisture สูงลด Dielectric strength, เร่ง Paper aging, เสี่ยง Bubble formation (อุณหภูมิสูง)<br>
         <b>ตรวจสอบ:</b> ตรวจ Seal & Gasket, Conservator, Silica gel breather (อิ่มตัว?), DBV (มักต่ำ), Sampling temperature<br>
         <b>แนวทาง:</b> Moisture ${fmt(v,1)} ppm → ${sev} + ตรวจ Seal system ทั้งหมด`;},
+    'Water in Oil': ()=>{
+      const v=d.water_in_oil_pct||0;
+      return `<b>📋 การวิเคราะห์ Moisture % Saturation</b><br>
+        <b>สาเหตุ:</b> น้ำมันมีปริมาณน้ำละลายอยู่สูงเมื่อเทียบกับจุดอิ่มตัวตามอุณหภูมิ<br>
+        <b>แนวทาง:</b> % Saturation ${fmt(v,1)}% → แนะนำ Oil Dehydration / Vacuum Processing`;},
+    'Water in Paper': ()=>{
+      const v=d.water_in_paper_pct||0;
+      return `<b>📋 การวิเคราะห์ Moisture in Solid Insulation</b><br>
+        <b>สาเหตุ:</b> กระดาษฉนวนดูดความชื้นไว้มาก ส่งผลต่ออายุการใช้งานและการลัดวงจร<br>
+        <b>แนวทาง:</b> Moisture in Paper ${fmt(v,2)}% → ต้องทำ Low Frequency Heating (LFH) หรือ Vapor Phase Drying`;}
   };
-  return (rs[type]||rs['DGA'])();
+  return (rs[type]||(()=>`<div style="color:var(--text2);">⚠️ พบปัญหา ${type} (${d[type]||'Over Limit'}) แนะนำให้ตรวจสอบเพิ่มเติม</div>`))();
 }
 function renderAIAnalysis() {
   const container=document.getElementById('ai-content');
