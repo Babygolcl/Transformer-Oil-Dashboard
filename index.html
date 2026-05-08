@@ -1,0 +1,892 @@
+<html lang="th"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Transformer Oil Analysis Dashboard V5 - Template</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1" integrity="sha384-jb8JQMbMoBUzgWatfe6COACi2ljcDdZQ2OxczGA3bGNeWe+6DChMTBJemed7ZnvJ" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div id="upload-screen" class="hidden">
+  <div class="upload-logo">Transformer Oil <span>Dashboard</span> V5</div>
+  <div class="upload-box" id="drop-zone">
+    <div class="upload-icon">📂</div>
+    <div class="upload-title">Upload Report Data</div>
+    <div class="upload-sub">
+      อัปโหลดไฟล์ <strong>transformer_data.json</strong><br>
+      ที่ได้จาก extract_transformer_pdf.py<br>
+      เพื่อเริ่มแสดงผล Dashboard
+    </div>
+    <button class="upload-btn" onclick="document.getElementById('json-input').click()">
+      📁 เลือกไฟล์ JSON
+    </button>
+    <input type="file" id="json-input" accept=".json" style="display:none">
+    <div class="upload-note">รองรับไฟล์ .json ที่สร้างจาก extract_transformer_pdf.py</div>
+    <div class="upload-error" id="upload-error">❌ ไม่สามารถอ่านไฟล์ได้ กรุณาตรวจสอบรูปแบบ JSON</div>
+  </div>
+  <div style="color:rgba(255,255,255,.4);font-size:11px;">
+    IEEE C57.104-2008 | IEC 60599:2007 | Data Entry Group Co., Ltd.
+  </div>
+</div>
+<div id="dashboard-root" style="display: block;">
+<div class="dashboard">
+<!-- HEADER -->
+<div class="header">
+  <div class="header-top">
+    <div><h1>⚡ Transformer Oil Analysis Dashboard</h1>
+      <div class="subtitle">SKIC -BP | Transformers: 36 | Sampling: 27-Mar-25</div>
+    </div>
+    <div class="header-meta">Lab: DS-25-0236 | Issue: 22 Apr 2025<br>By: Data Entry Group Co., Ltd.<br>
+      <span id="last-updated" style="color:#93c5fd;">Loaded: Current Report (36 units)</span>
+    </div>
+  </div>
+  <div class="filters">
+    <div class="filter-group"><label>Equipment:</label>
+      <select id="f-equipment" onchange="applyFilters()"><option value="all">All Transformers (36)</option><option value="Unit Sub 2">[1] Unit Sub 2 (4511428)</option><option value="Mill Supply">[2] Mill Supply (59134576EE)</option><option value="TR MSP#8-10">[3] TR MSP#8-10 (5612179)</option><option value="DWP#14-17">[4] DWP#14-17 (5612181)</option><option value="DWP#8-12">[5] DWP#8-12 (4810091)</option><option value="DWP#1-3">[6] DWP#1-3 (3710028)</option><option value="TG#12">[7] TG#12 (57051)</option><option value="12T3">[8] 12T3 (3612510)</option><option value="12T2">[9] 12T2 (3612509)</option><option value="12T1">[10] 12T1 (3612508)</option><option value="TA7">[11] TA7 (5810749)</option><option value="TA2">[12] TA2 (3712215)</option><option value="AIR COMP1">[13] AIR COMP1 (3410570)</option><option value="SHRD#2">[14] SHRD#2 (3410089)</option><option value="TG#11">[15] TG#11 (5011918)</option><option value="11T3 PB#11">[16] 11T3 PB#11 (5711579)</option><option value="11T2 PB#11">[17] 11T2 PB#11 (5196355)</option><option value="11T1 PB#11">[18] 11T1 PB#11 (6011735)</option><option value="BUS 1A">[19] BUS 1A (360351)</option><option value="TR-Service BUS1,2,3">[20] TR-Service BUS1,2,3 (5110001)</option><option value="T5 Station BUS DS">[21] T5 Station BUS DS (3912540)</option><option value="TR#2">[22] TR#2 (607034)</option><option value="TR#3">[23] TR#3 (60976)</option><option value="TR#2 BUS2">[24] TR#2 BUS2 (3910714)</option><option value="TR#1 BUS1">[25] TR#1 BUS1 (3910715)</option><option value="1T1BAT TG#17">[26] 1T1BAT TG#17 (60143706EE)</option><option value="PB-TX-03 PB#19">[27] PB-TX-03 PB#19 (5612165)</option><option value="PB-TX-02 PB#19">[28] PB-TX-02 PB#19 (5612164)</option><option value="PB-TX-01 PB#19">[29] PB-TX-01 PB#19 (5612162)</option><option value="TG#16">[30] TG#16 (4912056)</option><option value="TR3 PB#16">[31] TR3 PB#16 (4912059)</option><option value="TR2 PB#16">[32] TR2 PB#16 (4912058)</option><option value="TR1 PB#16">[33] TR1 PB#16 (4912057)</option><option value="TG#19">[34] TG#19 (6012307)</option><option value="TR2 WTE">[35] TR2 WTE (60143141EE)</option><option value="TR1 WTE">[36] TR1 WTE (60143142EE)</option></select>
+    </div>
+    <div class="filter-group"><label>DGA Condition:</label>
+      <select id="f-condition" onchange="applyFilters()">
+        <option value="all">All Conditions</option>
+        <option value="Normal">🟢 Normal (C1)</option>
+        <option value="Caution">🟡 Caution (C2 | 721–1920 ppm)</option>
+        <option value="Warning">🟠 Warning (C3 | 1921–4630 ppm)</option>
+        <option value="Critical">🔴 Critical (C4 | &gt;4630 ppm)</option>
+      </select>
+    </div>
+    <div class="filter-group"><label>Physical:</label>
+      <select id="f-physical" onchange="applyFilters()">
+        <option value="all">All</option><option value="over">Over Limit</option><option value="ok">Within Limit</option>
+      </select>
+    </div>
+    <div class="filter-group"><label>Electrical:</label>
+      <select id="f-electrical" onchange="applyFilters()">
+        <option value="all">All</option><option value="over">Over Limit</option><option value="ok">Within Limit</option>
+      </select>
+    </div>
+    <div class="filter-group"><label>Chemical:</label>
+      <select id="f-chemical" onchange="applyFilters()">
+        <option value="all">All</option><option value="over">Over Limit</option><option value="ok">Within Limit</option>
+      </select>
+    </div>
+    <button class="btn btn-upload" onclick="document.getElementById('uploadInput').click()">📁 Upload JSON Report</button>
+    <input type="file" id="uploadInput" accept=".json" style="display:none" onchange="loadNewReport(event)">
+    <button class="btn btn-primary" onclick="resetFilters()">↺ Reset</button>
+    <button class="btn btn-save" onclick="downloadWithData()" title="บันทึก HTML พร้อมข้อมูล — เปิดได้ทันทีโดยไม่ต้อง Upload ซ้ำ">💾 Save HTML</button>
+    <button class="btn btn-print" onclick="window.print()" title="Print หรือ Export PDF ผ่าน Browser">🖨️ Print / PDF</button>
+  </div>
+</div>
+
+<!-- KPI -->
+<div class="kpi-row">
+  <div class="kpi-card"><div class="kpi-label">Total Transformers</div><div class="kpi-value" id="kpi-total">36</div><div class="kpi-sub">SKIC-BP | Mar 2025</div></div>
+  <div class="kpi-card normal"><div class="kpi-label">Normal (DGA)</div><div class="kpi-value normal" id="kpi-normal">33</div><div class="kpi-sub">Condition 1 (IEEE C57.104)</div></div>
+  <div class="kpi-card" style="border-color:#ca8a04"><div class="kpi-label">Caution (DGA)</div><div class="kpi-value" style="color:#ca8a04" id="kpi-monitor">3</div><div class="kpi-sub">C2 — TDCG 721–1920 ppm</div></div>
+  <div class="kpi-card serious"><div class="kpi-label">Warning/Critical</div><div class="kpi-value serious" id="kpi-serious">0</div><div class="kpi-sub">C3–C4 — Investigate (TDCG &gt;1920)</div></div>
+  <div class="kpi-card" style="border-color:#f59e0b"><div class="kpi-label">Phys/Elec Over Limit</div><div class="kpi-value" style="color:#f59e0b" id="kpi-phys">5</div><div class="kpi-sub">Color/IFT (Phys) | DBV/DF (Elec)</div></div>
+  <div class="kpi-card" style="border-color:#7c3aed"><div class="kpi-label">Requires Action</div><div class="kpi-value" style="color:#7c3aed" id="kpi-action">35</div><div class="kpi-sub">Any parameter over limit</div></div>
+</div>
+
+<!-- TABS -->
+<div class="tabs">
+  <button class="tab active" onclick="showTab('overview',this)">📊 Overview</button>
+  <button class="tab" onclick="showTab('dga',this)">🧪 DGA Analysis</button>
+  <button class="tab" onclick="showTab('physical',this)">🔬 Physical Tests</button>
+  <button class="tab" onclick="showTab('electrical',this)">⚡ Electrical Tests</button>
+  <button class="tab" onclick="showTab('chemical',this)">🧬 Chemical Tests</button>
+  <button class="tab" onclick="showTab('trend',this)">📈 Trend Analysis</button>
+  <button class="tab" onclick="showTab('ai',this)">🤖 AI Analysis</button>
+  <button class="tab" onclick="showTab('standards',this)">📋 Standards</button>
+</div>
+
+<div class="tab-content">
+<!-- OVERVIEW -->
+<div class="tab-panel active" id="panel-overview">
+  <div class="chart-grid-4" style="margin-bottom:12px;">
+    <div class="chart-card"><h3>🧪 DGA Condition</h3><div class="chart-sub">TDCG-based | IEEE C57.104-2008</div><div class="h200"><canvas id="chart-condition-pie" style="box-sizing: border-box; display: block; height: 200px; width: 338.2px;" width="507" height="300"></canvas></div></div>
+    <div class="chart-card"><h3>🔬 Physical Test</h3><div class="chart-sub">Color (&lt;2.5) | IFT (&gt;25 mN/M)</div><div class="h200"><canvas id="chart-physical-pie" style="box-sizing: border-box; display: block; height: 200px; width: 338.2px;" width="507" height="300"></canvas></div></div>
+    <div class="chart-card"><h3>⚡ Electrical Test</h3><div class="chart-sub">DBV (&gt;30 kV) | DF25°C (&lt;0.5%) | DF100°C (&lt;5%)</div><div class="h200"><canvas id="chart-electrical-pie" style="box-sizing: border-box; display: block; height: 200px; width: 338.2px;" width="507" height="300"></canvas></div></div>
+    <div class="chart-card"><h3>🧬 Chemical Test</h3><div class="chart-sub">Acidity (&lt;0.20) | Moisture (&lt;35 ppm)</div><div class="h200"><canvas id="chart-chemical-pie" style="box-sizing: border-box; display: block; height: 200px; width: 338.2px;" width="507" height="300"></canvas></div></div>
+  </div>
+  <div class="chart-card" style="margin-bottom:16px;"><h3>TDCG — All Transformers</h3><div class="chart-sub">Total Dissolved Combustible Gas | C1≤720 | C2≤1920 ppm | 🔵 click row for details</div><div class="h260"><canvas id="chart-tdcg-bar" style="box-sizing: border-box; display: block; height: 260px; width: 1494.7px;" width="2242" height="390"></canvas></div></div>
+  <p style="font-size:12px;color:var(--text2);margin-bottom:8px;">💡 <b>คลิกที่แถว</b> เพื่อดูรายละเอียดและ Trend ของแต่ละค่าการทดสอบ | แถวสีส้ม = มีค่าเกิน Limit</p>
+  <div class="table-wrap">
+    <table class="data-table">
+      <thead><tr>
+        <th class="left">No.</th><th class="left">Equipment ID</th><th>Serial No.</th><th>Power</th><th>Mfr.</th><th>Year</th>
+        <th>DGA</th><th>Color<br><small>&lt;2.5</small></th><th>IFT<br><small>&gt;25</small></th>
+        <th>DBV kV<br><small>&gt;30</small></th><th>DF25°C<br><small>&lt;0.5%</small></th>
+        <th>Acidity<br><small>&lt;0.20</small></th><th>Moisture<br><small>&lt;35ppm</small></th>
+        <th>TDCG</th><th>CO</th><th>Action</th>
+      </tr></thead>
+      <tbody id="overview-tbody"><tr class="flagged">
+      <td class="left"><b>1</b></td>
+      <td class="left" style="color:var(--accent);cursor:pointer;"><b>Unit Sub 2</b></td>
+      <td>4511428</td><td>750 kVA</td>
+      <td>TIRATHAI</td><td>2002</td>
+      <td><span class="badge badge-green">Normal (C1)</span></td>
+      <td class="val-ok">2.0</td>
+      <td class="val-ok">32.0</td>
+      <td class="val-ok">64.1</td>
+      <td class="val-ok">0.020</td>
+      <td class="val-ok">0.020</td>
+      <td class="val-ok">8.1</td>
+      <td><b style="color:var(--yellow)">415</b></td>
+      <td style="color:var(--red)">364</td>
+      <td><small style="color:var(--red)">Review Required (DGA)</small></td></tr><tr class="flagged">
+      <td class="left"><b>2</b></td>
+      <td class="left" style="color:var(--accent);cursor:pointer;"><b>Mill Supply</b></td>
+      <td>59134576EE</td><td>1000 kVA</td>
+      <td>EKARAT</td><td>2016</td>
+      <td><span class="badge badge-green">Normal (C1)</span></td>
+      <td class="val-ok">0.5</td>
+      <td class="val-ok">30.0</td>
+      <td class="val-ok">66.0</td>
+      <td class="val-ok">0.003</td>
+      <td class="val-ok">0.012</td>
+      <td class="val-ok">12.8</td>
+      <td><b style="color:inherit">97</b></td>
+      <td style="color:inherit">84</td>
+      <td><small style="color:var(--yellow)">Analyze DGA (Elevated)</small></td></tr><tr class="">
+      <td class="left"><b>3</b></td>
+      <td class="left" style="color:var(--accent);cursor:pointer;"><b>TR MSP#8-10</b></td>
+      <td>5612179</td><td>1000 kVA</td>
+      <td>TIRATHAI</td><td>2014</td>
+      <td><span class="badge badge-green">Normal (C1)</span></td>
+      <td class="val-ok">0.5</td>
+      <td class="val-ok">33.0</td>
+      <td class="val-ok">54.8</td>
+      <td class="val-ok">0.001</td>
+      <td class="val-ok">0.007</td>
+      <td class="val-ok">4.7</td>
+      <td><b style="color:inherit">151</b></td>
+      <td style="color:inherit">140</td>
+      <td><small style="color:var(--green)">Normal Operation</small></td></tr><tr class="flagged">
+      <td class="left"><b>4</b></td>
+      <td class="left" style="color:var(--accent);cursor:pointer;"><b>DWP#14-17</b></td>
+      <td>5612181</td><td>500 kVA</td>
+      <td>TIRATHAI</td><td>2014</td>
+      <td><span class="badge badge-green">Normal (C1)</span></td>
+      <td class="val-ok">0.5</td>
+      <td class="val-ok">34.0</td>
+      <td class="val-ok">62.7</td>
+      <td class="val-ok">0.001</td>
+      <td class="val-ok">0.009</td>
+      <td class="val-ok">5.2</td>
+      <td><b style="color:inherit">101</b></td>
+      <td style="color:inherit">95</td>
+      <td><small style="color:var(--red)">Review Required (Water in Oil)</small></td></tr><tr class="flagged">
+      <td class="left"><b>5</b></td>
+      <td class="left" style="color:var(--accent);cursor:pointer;"><b>DWP#8-12</b></td>
+      <td>4810091</td><td>1500 kVA</td>
+      <td>TIRATHAI</td><td>2005</td>
+      <td><span class="badge badge-green">Normal (C1)</span></td>
+      <td class="val-ok">2.5</td>
+      <td class="val-ok">28.0</td>
+      <td class="val-ok">65.3</td>
+      <td class="val-ok">0.203</td>
+      <td class="val-ok">0.079</td>
+      <td class="val-ok">9.0</td>
+      <td><b style="color:var(--yellow)">506</b></td>
+      <td style="color:var(--red)">456</td>
+      <td><small style="color:var(--yellow)">Analyze DGA (Elevated)</small></td></tr><tr class="flagged">
+      <td class="left"><b>6</b></td>
+      <td class="left" style="color:var(--accent);cursor:pointer;"><b>DWP#1-3</b></td>
+      <td>3710028</td><td>1000 kVA</td>
+      <td>TIRATHAI</td><td>1994</td>
+      <td><span class="badge badge-green">Normal (C1)</span></td>
+      <td class="val-ok">2.5</td>
+      <td class="val-ok">29.0</td>
+      <td class="val-ok">67.1</td>
+      <td class="val-ok">0.069</td>
+      <td class="val-ok">0.046</td>
+      <td class="val-ok">22.8</td>
+      <td><b style="color:var(--yellow)">403</b></td>
+      <td style="color:inherit">291</td>
+      <td><small style="color:var(--red)">Review Required (DGA)</small></td></tr><tr class="flagged">
+      <td class="left"><b>7</b></td>
+      <td class="left" style="color:var(--accent);cursor:pointer;"><b>TG#12</b></td>
+      <td>57051</td><td>40000 kVA</td>
+      <td>SIEMENS</td><td>1996</td>
+      <td><span class="badge badge-green">Normal (C1)</span></td>
+      <td class="val-ok">2.0</td>
+      <td class="val-ok">30.0</td>
+      <td class="val-ok">64.1</td>
+      <td class="val-ok">0.036</td>
+      <td class="val-ok">0.025</td>
+      <td class="val-ok">10.0</td>
+      <td><b style="color:inherit">262</b></td>
+      <td style="color:inherit">202</td>
+      <td><small style="color:var(--yellow)">Analyze DGA (Elevated)</small></td></tr><tr class="flagged">
+      <td class="left"><b>8</b></td>
+      <td class="left" style="color:var(--accent);cursor:pointer;"><b>12T3</b></td>
+      <td>3612510</td><td>1000 kVA</td>
+      <td>TIRATHAI</td><td>1993</td>
+      <td><span class="badge badge-green">Normal (C1)</span></td>
+      <td class="val-ok">1.0</td>
+      <td class="val-ok">35.0</td>
+      <td class="val-ok">55.8</td>
+      <td class="val-ok">0.003</td>
+      <td class="val-ok">0.017</td>
+      <td class="val-ok">18.9</td>
+      <td><b style="color:inherit">220</b></td>
+      <td style="color:inherit">196</td>
+      <td><small style="color:var(--red)">Review Required (DGA)</small></td></tr><tr class="flagged">
+      <td class="left"><b>9</b></td>
+      <td class="left" style="color:var(--accent);cursor:pointer;"><b>12T2</b></td>
+      <td>3612509</td><td>3150 kVA</td>
+      <td>TIRATHAI</td><td>1993</td>
+      <td><span class="badge badge-green">Normal (C1)</span></td>
+      <td class="val-ok">2.0</td>
+      <td class="val-ok">33.0</td>
+      <td class="val-ok">44.9</td>
+      <td class="val-ok">0.054</td>
+      <td class="val-ok">0.054</td>
+      <td class="val-ok">22.9</td>
+      <td><b style="color:var(--yellow)">692</b></td>
+      <td style="color:var(--red)">579</td>
+      <td><small style="color:var(--red)">Review Required (DGA)</small></td></tr><tr class="flagged">
+      <td class="left"><b>10</b></td>
+      <td class="left" style="color:var(--accent);cursor:pointer;"><b>12T1</b></td>
+      <td>3612508</td><td>3150 kVA</td>
+      <td>TIRATHAI</td><td>1993</td>
+      <td><span class="badge badge-green">Normal (C1)</span></td>
+      <td class="val-ok">2.0</td>
+      <td class="val-ok">32.0</td>
+      <td class="val-ok">56.5</td>
+      <td class="val-ok">0.050</td>
+      <td class="val-ok">0.026</td>
+      <td class="val-ok">16.4</td>
+      <td><b style="color:var(--yellow)">587</b></td>
+      <td style="color:var(--red)">509</td>
+      <td><small style="color:var(--red)">Review Required (DGA)</small></td></tr><tr class="flagged">
+      <td class="left"><b>11</b></td>
+      <td class="left" style="color:var(--accent);cursor:pointer;"><b>TA7</b></td>
+      <td>5810749</td><td>500 kVA</td>
+      <td>TIRATHAI</td><td>2015</td>
+      <td><span class="badge badge-green">Normal (C1)</span></td>
+      <td class="val-ok">0.5</td>
+      <td class="val-ok">34.0</td>
+      <td class="val-ok">63.3</td>
+      <td class="val-ok">0.002</td>
+      <td class="val-ok">0.017</td>
+      <td class="val-ok">7.0</td>
+      <td><b style="color:inherit">192</b></td>
+      <td style="color:inherit">160</td>
+      <td><small style="color:var(--yellow)">Analyze DGA (Elevated)</small></td></tr><tr class="flagged">
+      <td class="left"><b>12</b></td>
+      <td class="left" style="color:var(--accent);cursor:pointer;"><b>TA2</b></td>
+      <td>3712215</td><td>100 kVA</td>
+      <td>TIRATHAI</td><td>1994</td>
+      <td><span class="badge badge-green">Normal (C1)</span></td>
+      <td class="val-ok">0.5</td>
+      <td class="val-ok">29.0</td>
+      <td class="val-ok">48.7</td>
+      <td class="val-ok">0.016</td>
+      <td class="val-ok">0.041</td>
+      <td class="val-ok">30.7</td>
+      <td><b style="color:inherit">125</b></td>
+      <td style="color:inherit">107</td>
+      <td><small style="color:var(--red)">Review Required (DGA)</small></td></tr><tr class="flagged">
+      <td class="left"><b>13</b></td>
+      <td class="left" style="color:var(--accent);cursor:pointer;"><b>AIR COMP1</b></td>
+      <td>3410570</td><td>500 kVA</td>
+      <td>TIRATHAI</td><td>1991</td>
+      <td><span class="badge badge-green">Normal (C1)</span></td>
+      <td class="val-ok">2.0</td>
+      <td class="val-ok">28.0</td>
+      <td class="val-over">24.1</td>
+      <td class="val-ok">0.055</td>
+      <td class="val-ok">0.017</td>
+      <td class="val-over">43.9</td>
+      <td><b style="color:var(--yellow)">362</b></td>
+      <td style="color:inherit">275</td>
+      <td><small style="color:var(--red)">Immediate Action Required</small></td></tr><tr class="flagged">
+      <td class="left"><b>14</b></td>
+      <td class="left" style="color:var(--accent);cursor:pointer;"><b>SHRD#2</b></td>
+      <td>3410089</td><td>1500 kVA</td>
+      <td>TIRATHAI</td><td>1991</td>
+      <td><span class="badge badge-green">Normal (C1)</span></td>
+      <td class="val-ok">2.0</td>
+      <td class="val-ok">26.0</td>
+      <td class="val-ok">66.8</td>
+      <td class="val-ok">0.027</td>
+      <td class="val-ok">0.014</td>
+      <td class="val-ok">10.7</td>
+      <td><b style="color:inherit">161</b></td>
+      <td style="color:inherit">133</td>
+      <td><small style="color:var(--red)">Review Required (Water in Oil)</small></td></tr><tr class="flagged">
+      <td class="left"><b>15</b></td>
+      <td class="left" style="color:var(--accent);cursor:pointer;"><b>TG#11</b></td>
+      <td>5011918</td><td>16000 kVA</td>
+      <td>TIRATHAI</td><td>2008</td>
+      <td><span class="badge badge-green">Normal (C1)</span></td>
+      <td class="val-ok">2.5</td>
+      <td class="val-ok">31.0</td>
+      <td class="val-ok">65.4</td>
+      <td class="val-ok">0.024</td>
+      <td class="val-ok">0.074</td>
+      <td class="val-ok">10.1</td>
+      <td><b style="color:var(--yellow)">430</b></td>
+      <td style="color:inherit">319</td>
+      <td><small style="color:var(--yellow)">Analyze DGA (Elevated)</small></td></tr><tr class="flagged">
+      <td class="left"><b>16</b></td>
+      <td class="left" style="color:var(--accent);cursor:pointer;"><b>11T3 PB#11</b></td>
+      <td>5711579</td><td>1000 kVA</td>
+      <td>TIRATHAI</td><td>2014</td>
+      <td><span class="badge badge-green">Normal (C1)</span></td>
+      <td class="val-ok">1.0</td>
+      <td class="val-ok">33.0</td>
+      <td class="val-ok">66.3</td>
+      <td class="val-ok">0.007</td>
+      <td class="val-ok">0.025</td>
+      <td class="val-ok">4.4</td>
+      <td><b style="color:var(--yellow)">667</b></td>
+      <td style="color:var(--red)">612</td>
+      <td><small style="color:var(--red)">Review Required (DGA)</small></td></tr><tr class="flagged">
+      <td class="left"><b>17</b></td>
+      <td class="left" style="color:var(--accent);cursor:pointer;"><b>11T2 PB#11</b></td>
+      <td>5196355</td><td>1000 kVA</td>
+      <td>ABB</td><td>1992</td>
+      <td><span class="badge badge-green">Normal (C1)</span></td>
+      <td class="val-ok">2.5</td>
+      <td class="val-ok">28.0</td>
+      <td class="val-ok">48.2</td>
+      <td class="val-ok">0.034</td>
+      <td class="val-ok">0.106</td>
+      <td class="val-ok">21.8</td>
+      <td><b style="color:inherit">187</b></td>
+      <td style="color:inherit">122</td>
+      <td><small style="color:var(--yellow)">Analyze DGA (Elevated)</small></td></tr><tr class="flagged">
+      <td class="left"><b>18</b></td>
+      <td class="left" style="color:var(--accent);cursor:pointer;"><b>11T1 PB#11</b></td>
+      <td>6011735</td><td>3150 kVA</td>
+      <td>TIRATHAI</td><td>2017</td>
+      <td><span class="badge badge-green">Normal (C1)</span></td>
+      <td class="val-ok">0.5</td>
+      <td class="val-ok">40.0</td>
+      <td class="val-ok">67.2</td>
+      <td class="val-ok">0.004</td>
+      <td class="val-ok">0.011</td>
+      <td class="val-ok">5.5</td>
+      <td><b style="color:inherit">339</b></td>
+      <td style="color:inherit">327</td>
+      <td><small style="color:var(--red)">Review Required (DGA)</small></td></tr><tr class="flagged">
+      <td class="left"><b>19</b></td>
+      <td class="left" style="color:var(--accent);cursor:pointer;"><b>BUS 1A</b></td>
+      <td>360351</td><td>100 kVA</td>
+      <td>TTC</td><td>1993</td>
+      <td><span class="badge badge-green">Normal (C1)</span></td>
+      <td class="val-ok">1.5</td>
+      <td class="val-ok">27.0</td>
+      <td class="val-ok">54.5</td>
+      <td class="val-ok">0.030</td>
+      <td class="val-ok">0.017</td>
+      <td class="val-ok">19.1</td>
+      <td><b style="color:inherit">103</b></td>
+      <td style="color:inherit">81</td>
+      <td><small style="color:var(--red)">Review Required (Water in Oil)</small></td></tr><tr class="flagged">
+      <td class="left"><b>20</b></td>
+      <td class="left" style="color:var(--accent);cursor:pointer;"><b>TR-Service BUS1,2,3</b></td>
+      <td>5110001</td><td>100 kVA</td>
+      <td>TIRATHAI</td><td>2008</td>
+      <td><span class="badge badge-green">Normal (C1)</span></td>
+      <td class="val-ok">1.5</td>
+      <td class="val-ok">30.0</td>
+      <td class="val-ok">68.1</td>
+      <td class="val-ok">0.009</td>
+      <td class="val-ok">0.012</td>
+      <td class="val-ok">10.4</td>
+      <td><b style="color:var(--yellow)">609</b></td>
+      <td style="color:var(--red)">491</td>
+      <td><small style="color:var(--red)">Review Required (DGA)</small></td></tr><tr class="flagged">
+      <td class="left"><b>21</b></td>
+      <td class="left" style="color:var(--accent);cursor:pointer;"><b>T5 Station BUS DS</b></td>
+      <td>3912540</td><td>100 kVA</td>
+      <td>TIRATHAI</td><td>1996</td>
+      <td><span class="badge badge-green">Normal (C1)</span></td>
+      <td class="val-over">3.5</td>
+      <td class="val-over">18.0</td>
+      <td class="val-ok">33.2</td>
+      <td class="val-ok">0.146</td>
+      <td class="val-ok">0.154</td>
+      <td class="val-ok">33.2</td>
+      <td><b style="color:var(--yellow)">498</b></td>
+      <td style="color:var(--red)">446</td>
+      <td><small style="color:var(--red)">Immediate Action Required</small></td></tr><tr class="flagged">
+      <td class="left"><b>22</b></td>
+      <td class="left" style="color:var(--accent);cursor:pointer;"><b>TR#2</b></td>
+      <td>607034</td><td>10000 kVA</td>
+      <td>TIRATHAI</td><td>1996</td>
+      <td><span class="badge badge-yellow">Caution (C2)</span></td>
+      <td class="val-ok">0.5</td>
+      <td class="val-ok">39.0</td>
+      <td class="val-ok">67.5</td>
+      <td class="val-ok">0.045</td>
+      <td class="val-ok">0.011</td>
+      <td class="val-ok">2.9</td>
+      <td><b style="color:var(--red)">909</b></td>
+      <td style="color:var(--red)">902</td>
+      <td><small style="color:var(--red)">Review Required (DGA)</small></td></tr><tr class="flagged">
+      <td class="left"><b>23</b></td>
+      <td class="left" style="color:var(--accent);cursor:pointer;"><b>TR#3</b></td>
+      <td>60976</td><td>12500 kVA</td>
+      <td>NISSIN</td><td>1986</td>
+      <td><span class="badge badge-green">Normal (C1)</span></td>
+      <td class="val-over">4.0</td>
+      <td class="val-ok">32.0</td>
+      <td class="val-ok">67.1</td>
+      <td class="val-ok">0.047</td>
+      <td class="val-ok">0.014</td>
+      <td class="val-ok">5.3</td>
+      <td><b style="color:var(--yellow)">526</b></td>
+      <td style="color:inherit">184</td>
+      <td><small style="color:var(--red)">Immediate Action Required</small></td></tr><tr class="flagged">
+      <td class="left"><b>24</b></td>
+      <td class="left" style="color:var(--accent);cursor:pointer;"><b>TR#2 BUS2</b></td>
+      <td>3910714</td><td>10000 kVA</td>
+      <td>TIRATHAI</td><td>1996</td>
+      <td><span class="badge badge-green">Normal (C1)</span></td>
+      <td class="val-ok">1.0</td>
+      <td class="val-ok">36.0</td>
+      <td class="val-ok">65.0</td>
+      <td class="val-ok">0.003</td>
+      <td class="val-ok">0.005</td>
+      <td class="val-ok">11.9</td>
+      <td><b style="color:inherit">256</b></td>
+      <td style="color:inherit">241</td>
+      <td><small style="color:var(--yellow)">Analyze DGA (Elevated)</small></td></tr><tr class="flagged">
+      <td class="left"><b>25</b></td>
+      <td class="left" style="color:var(--accent);cursor:pointer;"><b>TR#1 BUS1</b></td>
+      <td>3910715</td><td>10000 kVA</td>
+      <td>TIRATHAI</td><td>1996</td>
+      <td><span class="badge badge-green">Normal (C1)</span></td>
+      <td class="val-ok">1.0</td>
+      <td class="val-ok">33.0</td>
+      <td class="val-ok">49.6</td>
+      <td class="val-ok">0.006</td>
+      <td class="val-ok">0.019</td>
+      <td class="val-ok">26.8</td>
+      <td><b style="color:inherit">249</b></td>
+      <td style="color:inherit">208</td>
+      <td><small style="color:var(--red)">Review Required (DGA)</small></td></tr><tr class="flagged">
+      <td class="left"><b>26</b></td>
+      <td class="left" style="color:var(--accent);cursor:pointer;"><b>1T1BAT TG#17</b></td>
+      <td>60143706EE</td><td>11000 kVA</td>
+      <td>EKARAT</td><td>2018</td>
+      <td><span class="badge badge-yellow">Caution (C2)</span></td>
+      <td class="val-ok">0.5</td>
+      <td class="val-ok">34.0</td>
+      <td class="val-ok">58.6</td>
+      <td class="val-ok">0.002</td>
+      <td class="val-ok">0.017</td>
+      <td class="val-ok">6.5</td>
+      <td><b style="color:var(--red)">1824</b></td>
+      <td style="color:var(--red)">1735</td>
+      <td><small style="color:var(--red)">Immediate Action Required</small></td></tr><tr class="flagged">
+      <td class="left"><b>27</b></td>
+      <td class="left" style="color:var(--accent);cursor:pointer;"><b>PB-TX-03 PB#19</b></td>
+      <td>5612165</td><td>4000 kVA</td>
+      <td>TIRATHAI</td><td>2014</td>
+      <td><span class="badge badge-green">Normal (C1)</span></td>
+      <td class="val-ok">1.0</td>
+      <td class="val-ok">34.0</td>
+      <td class="val-ok">69.1</td>
+      <td class="val-ok">0.005</td>
+      <td class="val-ok">0.020</td>
+      <td class="val-ok">6.1</td>
+      <td><b style="color:var(--yellow)">486</b></td>
+      <td style="color:var(--red)">435</td>
+      <td><small style="color:var(--yellow)">Analyze DGA (Elevated)</small></td></tr><tr class="flagged">
+      <td class="left"><b>28</b></td>
+      <td class="left" style="color:var(--accent);cursor:pointer;"><b>PB-TX-02 PB#19</b></td>
+      <td>5612164</td><td>4500 kVA</td>
+      <td>TIRATHAI</td><td>2014</td>
+      <td><span class="badge badge-green">Normal (C1)</span></td>
+      <td class="val-ok">0.5</td>
+      <td class="val-ok">37.0</td>
+      <td class="val-ok">70.1</td>
+      <td class="val-ok">0.002</td>
+      <td class="val-ok">0.012</td>
+      <td class="val-ok">4.0</td>
+      <td><b style="color:inherit">253</b></td>
+      <td style="color:inherit">227</td>
+      <td><small style="color:var(--yellow)">Analyze DGA (Elevated)</small></td></tr><tr class="flagged">
+      <td class="left"><b>29</b></td>
+      <td class="left" style="color:var(--accent);cursor:pointer;"><b>PB-TX-01 PB#19</b></td>
+      <td>5612162</td><td>3000 kVA</td>
+      <td>TIRATHAI</td><td>2014</td>
+      <td><span class="badge badge-green">Normal (C1)</span></td>
+      <td class="val-ok">0.5</td>
+      <td class="val-ok">35.0</td>
+      <td class="val-ok">65.7</td>
+      <td class="val-ok">0.002</td>
+      <td class="val-ok">0.010</td>
+      <td class="val-ok">5.4</td>
+      <td><b style="color:inherit">235</b></td>
+      <td style="color:inherit">205</td>
+      <td><small style="color:var(--yellow)">Analyze DGA (Elevated)</small></td></tr><tr class="flagged">
+      <td class="left"><b>30</b></td>
+      <td class="left" style="color:var(--accent);cursor:pointer;"><b>TG#16</b></td>
+      <td>4912056</td><td>30000 kVA</td>
+      <td>TIRATHAI</td><td>2007</td>
+      <td><span class="badge badge-green">Normal (C1)</span></td>
+      <td class="val-ok">1.0</td>
+      <td class="val-ok">30.0</td>
+      <td class="val-ok">70.2</td>
+      <td class="val-ok">0.013</td>
+      <td class="val-ok">0.020</td>
+      <td class="val-ok">8.9</td>
+      <td><b style="color:var(--yellow)">529</b></td>
+      <td style="color:var(--red)">466</td>
+      <td><small style="color:var(--red)">Immediate Action Required</small></td></tr><tr class="flagged">
+      <td class="left"><b>31</b></td>
+      <td class="left" style="color:var(--accent);cursor:pointer;"><b>TR3 PB#16</b></td>
+      <td>4912059</td><td>2500 kVA</td>
+      <td>TIRATHAI</td><td>2007</td>
+      <td><span class="badge badge-green">Normal (C1)</span></td>
+      <td class="val-ok">1.5</td>
+      <td class="val-over">23.0</td>
+      <td class="val-ok">67.7</td>
+      <td class="val-ok">0.025</td>
+      <td class="val-ok">0.066</td>
+      <td class="val-ok">12.3</td>
+      <td><b style="color:var(--yellow)">393</b></td>
+      <td style="color:inherit">266</td>
+      <td><small style="color:var(--red)">Review Required (DGA)</small></td></tr><tr class="flagged">
+      <td class="left"><b>32</b></td>
+      <td class="left" style="color:var(--accent);cursor:pointer;"><b>TR2 PB#16</b></td>
+      <td>4912058</td><td>3000 kVA</td>
+      <td>TIRATHAI</td><td>2007</td>
+      <td><span class="badge badge-green">Normal (C1)</span></td>
+      <td class="val-ok">1.0</td>
+      <td class="val-ok">33.0</td>
+      <td class="val-ok">60.9</td>
+      <td class="val-ok">0.004</td>
+      <td class="val-ok">0.031</td>
+      <td class="val-ok">23.4</td>
+      <td><b style="color:inherit">292</b></td>
+      <td style="color:inherit">254</td>
+      <td><small style="color:var(--red)">Review Required (DGA)</small></td></tr><tr class="flagged">
+      <td class="left"><b>33</b></td>
+      <td class="left" style="color:var(--accent);cursor:pointer;"><b>TR1 PB#16</b></td>
+      <td>4912057</td><td>2500 kVA</td>
+      <td>TIRATHAI</td><td>2007</td>
+      <td><span class="badge badge-green">Normal (C1)</span></td>
+      <td class="val-over">3.0</td>
+      <td class="val-over">22.0</td>
+      <td class="val-ok">71.8</td>
+      <td class="val-ok">0.080</td>
+      <td class="val-ok">0.146</td>
+      <td class="val-ok">13.7</td>
+      <td><b style="color:var(--yellow)">549</b></td>
+      <td style="color:var(--red)">369</td>
+      <td><small style="color:var(--red)">Review Required (DGA)</small></td></tr><tr class="flagged">
+      <td class="left"><b>34</b></td>
+      <td class="left" style="color:var(--accent);cursor:pointer;"><b>TG#19</b></td>
+      <td>6012307</td><td>30000 kVA</td>
+      <td>TIRATHAI</td><td>2018</td>
+      <td><span class="badge badge-yellow">Caution (C2)</span></td>
+      <td class="val-ok">1.5</td>
+      <td class="val-ok">40.0</td>
+      <td class="val-ok">67.1</td>
+      <td class="val-ok">0.001</td>
+      <td class="val-ok">0.016</td>
+      <td class="val-ok">4.7</td>
+      <td><b style="color:var(--red)">1151</b></td>
+      <td style="color:var(--red)">1140</td>
+      <td><small style="color:var(--red)">Review Required (DGA)</small></td></tr><tr class="flagged">
+      <td class="left"><b>35</b></td>
+      <td class="left" style="color:var(--accent);cursor:pointer;"><b>TR2 WTE</b></td>
+      <td>60143141EE</td><td>2000 kVA</td>
+      <td>EKARAT</td><td>2017</td>
+      <td><span class="badge badge-green">Normal (C1)</span></td>
+      <td class="val-ok">1.0</td>
+      <td class="val-ok">26.0</td>
+      <td class="val-ok">66.3</td>
+      <td class="val-ok">0.004</td>
+      <td class="val-ok">0.020</td>
+      <td class="val-ok">5.9</td>
+      <td><b style="color:inherit">341</b></td>
+      <td style="color:inherit">311</td>
+      <td><small style="color:var(--red)">Review Required (DGA)</small></td></tr><tr class="flagged">
+      <td class="left"><b>36</b></td>
+      <td class="left" style="color:var(--accent);cursor:pointer;"><b>TR1 WTE</b></td>
+      <td>60143142EE</td><td>1500 kVA</td>
+      <td>EKARAT</td><td>2017</td>
+      <td><span class="badge badge-green">Normal (C1)</span></td>
+      <td class="val-ok">1.0</td>
+      <td class="val-ok">30.0</td>
+      <td class="val-ok">72.2</td>
+      <td class="val-ok">0.002</td>
+      <td class="val-ok">0.014</td>
+      <td class="val-ok">4.5</td>
+      <td><b style="color:inherit">250</b></td>
+      <td style="color:inherit">232</td>
+      <td><small style="color:var(--yellow)">Analyze DGA (Elevated)</small></td></tr></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- DGA -->
+<div class="tab-panel" id="panel-dga">
+  <div class="chart-grid-3">
+    <div class="chart-card"><h3>H₂ — Hydrogen</h3><div class="chart-sub">Limit C1≤100 | C2≤700 | C3≤1800 ppm (IEEE C57.104-2008)</div><div class="h340"><canvas id="chart-H2" style="box-sizing: border-box; display: block; height: 0px; width: 0px;" width="0" height="0"></canvas></div></div>
+    <div class="chart-card"><h3>CO — Carbon Monoxide</h3><div class="chart-sub">Limit C1≤350 | C2≤570 | C3≤1400 ppm (IEEE C57.104-2008)</div><div class="h340"><canvas id="chart-CO" style="box-sizing: border-box; display: block; height: 0px; width: 0px;" width="0" height="0"></canvas></div></div>
+    <div class="chart-card"><h3>CO₂ — Carbon Dioxide</h3><div class="chart-sub">Limit C1≤2500 | C2≤4000 | C3≤10000 ppm (IEEE C57.104-2008)</div><div class="h340"><canvas id="chart-CO2" style="box-sizing: border-box; display: block; height: 0px; width: 0px;" width="0" height="0"></canvas></div></div>
+    <div class="chart-card"><h3>CH₄ — Methane</h3><div class="chart-sub">Limit C1≤120 | C2≤400 | C3≤1000 ppm — Thermal fault indicator</div><div class="h340"><canvas id="chart-CH4" style="box-sizing: border-box; display: block; height: 0px; width: 0px;" width="0" height="0"></canvas></div></div>
+    <div class="chart-card"><h3>C₂H₄ — Ethylene</h3><div class="chart-sub">Limit C1≤50 | C2≤100 | C3≤200 ppm — High-temp thermal &gt;700°C</div><div class="h340"><canvas id="chart-C2H4" style="box-sizing: border-box; display: block; height: 0px; width: 0px;" width="0" height="0"></canvas></div></div>
+    <div class="chart-card"><h3>C₂H₂ — Acetylene ⚠️</h3><div class="chart-sub">Limit C1≤1 | C2≤9 | C3≤35 ppm — Arc/Discharge indicator (critical)</div><div class="h340"><canvas id="chart-C2H2" style="box-sizing: border-box; display: block; height: 0px; width: 0px;" width="0" height="0"></canvas></div></div>
+    <div class="chart-card"><h3>C₂H₆ — Ethane</h3><div class="chart-sub">Limit C1≤65 | C2≤100 | C3≤150 ppm — Low-temp thermal &lt;300°C</div><div class="h340"><canvas id="chart-C2H6" style="box-sizing: border-box; display: block; height: 0px; width: 0px;" width="0" height="0"></canvas></div></div>
+    <div class="chart-card"><h3>TDCG — Total Dissolved Combustible Gas</h3><div class="chart-sub">Limit C1≤720 | C2≤1920 | C3≤4630 ppm (IEEE C57.104-2008)</div><div class="h340"><canvas id="chart-TDCG" style="box-sizing: border-box; display: block; height: 0px; width: 0px;" width="0" height="0"></canvas></div></div>
+    <div class="chart-card"><h3>Gas Composition — Stacked View</h3><div class="chart-sub">Proportional breakdown of combustible gases per transformer</div><div class="h340"><canvas id="chart-dga-stack" style="box-sizing: border-box; display: block; height: 0px; width: 0px;" width="0" height="0"></canvas></div></div>
+  </div>
+</div>
+
+<!-- PHYSICAL -->
+<div class="tab-panel" id="panel-physical">
+  <div class="chart-grid">
+    <div class="chart-card"><h3>Color Number (ASTM D1500)</h3><div class="chart-sub">Limit &lt; 2.5 | สีน้ำมันที่เข้มขึ้นบ่งชี้การเสื่อมสภาพ | IEEE C57-106-2015</div><div class="h380"><canvas id="chart-color" style="box-sizing: border-box; display: block; height: 0px; width: 0px;" width="0" height="0"></canvas></div></div>
+    <div class="chart-card"><h3>Interfacial Tension — IFT (ASTM D971)</h3><div class="chart-sub">Limit &gt; 25 mN/M | ค่าต่ำบ่งชี้ Polar compounds / น้ำมันเสื่อม | IEEE C57-106-2015</div><div class="h380"><canvas id="chart-ift" style="box-sizing: border-box; display: block; height: 0px; width: 0px;" width="0" height="0"></canvas></div></div>
+  </div>
+</div>
+
+<!-- ELECTRICAL -->
+<div class="tab-panel" id="panel-electrical">
+  <div class="chart-grid">
+    <div class="chart-card"><h3>Dielectric Breakdown Voltage — DBV (ASTM D877 / IEC60156)</h3><div class="chart-sub">Limit &gt; 30 kV | ค่าต่ำบ่งชี้ความชื้น/สิ่งปนเปื้อน | IEEE C57-106-2015</div><div class="h380"><canvas id="chart-dbv" style="box-sizing: border-box; display: block; height: 0px; width: 0px;" width="0" height="0"></canvas></div></div>
+    <div class="chart-card"><h3>Dissipation Factor at 25°C (ASTM D924)</h3><div class="chart-sub">Limit &lt; 0.5% | ค่าสูงบ่งชี้ฉนวนเสื่อมสภาพ/มีสิ่งปนเปื้อน | IEEE C57-106-2015</div><div class="h380"><canvas id="chart-df25" style="box-sizing: border-box; display: block; height: 0px; width: 0px;" width="0" height="0"></canvas></div></div>
+  </div>
+</div>
+
+<!-- CHEMICAL -->
+<div class="tab-panel" id="panel-chemical">
+  <div class="chart-grid">
+    <div class="chart-card"><h3>Acid Number (ASTM D664)</h3><div class="chart-sub">Limit &lt; 0.20 mgKOH/g | ค่าสูงบ่งชี้ Oil oxidation เสี่ยงเกิด Sludge | IEEE C57-106-2015</div><div class="h380"><canvas id="chart-acidity" style="box-sizing: border-box; display: block; height: 0px; width: 0px;" width="0" height="0"></canvas></div></div>
+    <div class="chart-card"><h3>Moisture Content (ASTM D1533)</h3><div class="chart-sub">Limit &lt; 35 ppm | ความชื้นสูงลด Dielectric strength และเร่ง Paper aging | IEEE C57-106-2015</div><div class="h380"><canvas id="chart-moisture" style="box-sizing: border-box; display: block; height: 0px; width: 0px;" width="0" height="0"></canvas></div></div>
+    <div class="chart-card"><h3>Water in Oil — % Saturation (IEEE 62-1995)</h3><div class="chart-sub">Dry &lt;5% | Moderate 6–20% | Wet 21–30% | Extremely Wet &gt;30% | ความชื้นสัมพัทธ์ในน้ำมัน</div><div class="h380"><canvas id="chart-water-oil" style="box-sizing: border-box; display: block; height: 0px; width: 0px;" width="0" height="0"></canvas></div></div>
+    <div class="chart-card"><h3>Water in Paper — % Moisture (IEEE 62-1995)</h3><div class="chart-sub">Dry &lt;2% | Wet 2–4% | Extremely Wet &gt;4% | ความชื้นในฉนวน Cellulose Paper</div><div class="h380"><canvas id="chart-water-paper" style="box-sizing: border-box; display: block; height: 0px; width: 0px;" width="0" height="0"></canvas></div></div>
+  </div>
+</div>
+
+<!-- TREND -->
+<div class="tab-panel" id="panel-trend">
+  <div class="trend-header">
+    <label>🔍 เลือกหม้อแปลง:</label>
+    <select id="trend-select" onchange="updateTrendCharts()"><option value="1">[1] Unit Sub 2 (4511428)</option><option value="2">[2] Mill Supply (59134576EE)</option><option value="3">[3] TR MSP#8-10 (5612179)</option><option value="4">[4] DWP#14-17 (5612181)</option><option value="5">[5] DWP#8-12 (4810091)</option><option value="6">[6] DWP#1-3 (3710028)</option><option value="7">[7] TG#12 (57051)</option><option value="8">[8] 12T3 (3612510)</option><option value="9">[9] 12T2 (3612509)</option><option value="10">[10] 12T1 (3612508)</option><option value="11">[11] TA7 (5810749)</option><option value="12">[12] TA2 (3712215)</option><option value="13">[13] AIR COMP1 (3410570)</option><option value="14">[14] SHRD#2 (3410089)</option><option value="15">[15] TG#11 (5011918)</option><option value="16">[16] 11T3 PB#11 (5711579)</option><option value="17">[17] 11T2 PB#11 (5196355)</option><option value="18">[18] 11T1 PB#11 (6011735)</option><option value="19">[19] BUS 1A (360351)</option><option value="20">[20] TR-Service BUS1,2,3 (5110001)</option><option value="21">[21] T5 Station BUS DS (3912540)</option><option value="22">[22] TR#2 (607034)</option><option value="23">[23] TR#3 (60976)</option><option value="24">[24] TR#2 BUS2 (3910714)</option><option value="25">[25] TR#1 BUS1 (3910715)</option><option value="26">[26] 1T1BAT TG#17 (60143706EE)</option><option value="27">[27] PB-TX-03 PB#19 (5612165)</option><option value="28">[28] PB-TX-02 PB#19 (5612164)</option><option value="29">[29] PB-TX-01 PB#19 (5612162)</option><option value="30">[30] TG#16 (4912056)</option><option value="31">[31] TR3 PB#16 (4912059)</option><option value="32">[32] TR2 PB#16 (4912058)</option><option value="33">[33] TR1 PB#16 (4912057)</option><option value="34">[34] TG#19 (6012307)</option><option value="35">[35] TR2 WTE (60143141EE)</option><option value="36">[36] TR1 WTE (60143142EE)</option></select>
+    <div class="trend-badge" id="trend-badge"></div>
+  </div>
+  <div class="info-grid" id="trend-info-grid" style="margin-bottom:16px;"></div>
+  <div class="sub-tabs">
+    <button class="sub-tab active" onclick="showSubTab('tdga',this)">🧪 DGA — แต่ละ Gas</button>
+    <button class="sub-tab" onclick="showSubTab('tphys',this)">🔬 Physical Tests</button>
+    <button class="sub-tab" onclick="showSubTab('telec',this)">⚡ Electrical Tests</button>
+    <button class="sub-tab" onclick="showSubTab('tchem',this)">🧬 Chemical Tests</button>
+  </div>
+  <div class="sub-panel active" id="sub-tdga"><div class="chart-grid-4" id="trend-dga-grid"></div></div>
+  <div class="sub-panel" id="sub-tphys"><div class="chart-grid-4" id="trend-phys-grid"></div></div>
+  <div class="sub-panel" id="sub-telec"><div class="chart-grid-4" id="trend-elec-grid"></div></div>
+  <div class="sub-panel" id="sub-tchem"><div class="chart-grid-4" id="trend-chem-grid"></div></div>
+</div>
+
+<!-- AI -->
+<div class="tab-panel" id="panel-ai">
+  <div style="margin-bottom:12px;padding:10px 16px;background:#eff6ff;border-radius:8px;border-left:4px solid var(--accent);font-size:12px;">
+    🤖 วิเคราะห์อัตโนมัติ อ้างอิง <b>IEEE C57.104-2008</b>, <b>IEC 60599:2007</b>, <b>IEEE C57-106-2015</b> | แสดงเฉพาะหม้อแปลงที่มีค่าเกิน Limit
+  </div>
+  <div id="ai-content"></div>
+</div>
+
+<!-- STANDARDS -->
+<div class="tab-panel" id="panel-standards">
+  <div class="standards-grid">
+    <div class="std-card"><h3>📌 IEEE C57.104-2008 — DGA Condition Limits (ppm)</h3>
+      <table class="std-table">
+        <tbody><tr><th>Gas</th><th class="c1">C1 (Normal)</th><th class="c2">C2 (Caution)</th><th class="c3">C3 (Warning)</th><th class="c4">C4 (Critical)</th></tr>
+        <tr><td>H₂</td><td class="c1">≤ 100</td><td class="c2">101–700</td><td class="c3">701–1800</td><td class="c4">&gt;1800</td></tr>
+        <tr><td>CH₄</td><td class="c1">≤ 120</td><td class="c2">121–400</td><td class="c3">401–1000</td><td class="c4">&gt;1000</td></tr>
+        <tr><td>C₂H₂</td><td class="c1">≤ 1</td><td class="c2">2–9</td><td class="c3">10–35</td><td class="c4">&gt;35</td></tr>
+        <tr><td>C₂H₄</td><td class="c1">≤ 50</td><td class="c2">51–100</td><td class="c3">101–200</td><td class="c4">&gt;200</td></tr>
+        <tr><td>C₂H₆</td><td class="c1">≤ 65</td><td class="c2">66–100</td><td class="c3">101–150</td><td class="c4">&gt;150</td></tr>
+        <tr><td>CO</td><td class="c1">≤ 350</td><td class="c2">351–570</td><td class="c3">571–1400</td><td class="c4">&gt;1400</td></tr>
+        <tr><td>CO₂</td><td class="c1">≤ 2500</td><td class="c2">2501–4000</td><td class="c3">4001–10000</td><td class="c4">&gt;10000</td></tr>
+        <tr><td>TDCG</td><td class="c1">≤ 720</td><td class="c2">721–1920</td><td class="c3">1921–4630</td><td class="c4">&gt;4630</td></tr>
+      </tbody></table>
+    </div>
+    <div class="std-card"><h3>📌 IEC 60599:2007 — Key Gas Limits (ppm)</h3>
+      <table class="std-table">
+        <tbody><tr><th>Gas</th><th>L1</th><th>2×L1</th><th>Fault Type</th></tr>
+        <tr><td>H₂</td><td>50</td><td>150</td><td>PD, Overheating</td></tr>
+        <tr><td>CH₄</td><td>30</td><td>130</td><td>Low-temp thermal</td></tr>
+        <tr><td>CO</td><td>400</td><td>600</td><td>Paper/oil oxidation</td></tr>
+        <tr><td>C₂H₂</td><td>2</td><td>20</td><td>Arc discharge ⚠️</td></tr>
+        <tr><td>C₂H₄</td><td>60</td><td>280</td><td>High-temp &gt;700°C</td></tr>
+        <tr><td>C₂H₆</td><td>20</td><td>90</td><td>Thermal &lt;300°C</td></tr>
+      </tbody></table>
+    </div>
+    <div class="std-card"><h3>📌 Physical/Electrical — IEEE C57-106-2015</h3>
+      <table class="std-table">
+        <tbody><tr><th>Test</th><th>Method</th><th>Limit (≤69kV)</th></tr>
+        <tr><td>Color Number</td><td>ASTM D1500</td><td>&lt; 2.5</td></tr>
+        <tr><td>IFT</td><td>ASTM D971</td><td>&gt; 25 mN/M</td></tr>
+        <tr><td>DBV</td><td>ASTM D877 / IEC60156</td><td>&gt; 30 kV</td></tr>
+        <tr><td>DF at 25°C</td><td>ASTM D924</td><td>&lt; 0.5%</td></tr>
+        <tr><td>DF at 100°C</td><td>ASTM D924</td><td>&lt; 5.0%</td></tr>
+      </tbody></table>
+    </div>
+    <div class="std-card"><h3>📌 Chemical — IEEE C57-106-2015</h3>
+      <table class="std-table">
+        <tbody><tr><th>Test</th><th>Method</th><th>Limit</th></tr>
+        <tr><td>Acid Number</td><td>ASTM D664</td><td>&lt; 0.20 mgKOH/g</td></tr>
+        <tr><td>Moisture</td><td>ASTM D1533</td><td>&lt; 35 ppm</td></tr>
+        <tr><td>Oxidation Inhibitor</td><td>ASTM D2668</td><td>&gt; 0.08%</td></tr>
+      </tbody></table>
+    </div>
+    <div class="std-card"><h3>📌 Fault Diagnosis Methods</h3>
+      <table class="std-table">
+        <tbody><tr><th>Code</th><th>Fault</th><th>Key Gases</th></tr>
+        <tr><td><b>PD</b></td><td>Corona Partial Discharge</td><td>H₂, CH₄</td></tr>
+        <tr><td><b>D1</b></td><td>Low Energy Discharge</td><td>C₂H₂, H₂</td></tr>
+        <tr><td><b>D2</b></td><td>High Energy Discharge</td><td>C₂H₂, H₂, C₂H₄</td></tr>
+        <tr><td><b>T1</b></td><td>Thermal &lt;300°C</td><td>CH₄, C₂H₆</td></tr>
+        <tr><td><b>T2</b></td><td>Thermal 300–700°C</td><td>C₂H₄, CH₄</td></tr>
+        <tr><td><b>T3</b></td><td>Thermal &gt;700°C</td><td>C₂H₄ dominant</td></tr>
+      </tbody></table>
+    </div>
+    <div class="std-card"><h3>📌 Moisture Interpretation (IEEE 62-1995)</h3>
+      <table class="std-table">
+        <tbody><tr><th>% Wet Saturation in Oil</th><th>Condition</th></tr>
+        <tr><td>0–5%</td><td class="c1">Dry</td></tr><tr><td>6–20%</td><td class="c2">Moderate Wet</td></tr>
+        <tr><td>21–30%</td><td class="c3">Wet</td></tr><tr><td>&gt;30%</td><td class="c4">Extremely Wet</td></tr>
+        <tr><th>% Moisture in Paper</th><th>Condition</th></tr>
+        <tr><td>0–2%</td><td class="c1">Dry Paper</td></tr><tr><td>2–4%</td><td class="c2">Wet Paper</td></tr>
+        <tr><td>&gt;4%</td><td class="c4">Extremely Wet</td></tr>
+      </tbody></table>
+    </div>
+    <!-- DUVAL TRIANGLE SVG -->
+    <div class="std-card" style="grid-column:span 2;">
+      <h3>📐 Duval Triangle 1 — IEC 60599:2007 Fault Zone Diagram</h3>
+      <div style="display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap;">
+        <svg viewBox="0 0 460 430" width="420" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0;border:1px solid #e5e7eb;border-radius:6px;background:#fafafa;">
+          <!-- Zone fills (IEC 60599:2007 boundaries) -->
+          <!-- D1: pA≥29 ∪ (13≤pA<29 AND pE<23) — dark crimson -->
+          <polygon points="194,69 20,400 304,400 208,218 240,157" fill="#991b1b" opacity="0.88"></polygon>
+          <!-- D2: 13≤pA<29 AND pE≥23 — red -->
+          <polygon points="240,157 208,218 304,400 368,400" fill="#dc2626" opacity="0.88"></polygon>
+          <!-- DT: 4≤pA<13 AND pE≥15 — orange-red -->
+          <polygon points="224,126 368,400 404,400 242,92" fill="#ea580c" opacity="0.88"></polygon>
+          <!-- T3: pA<4 AND pE≥50 — orange -->
+          <polygon points="312,225 404,400 420,400 320,210" fill="#f97316" opacity="0.88"></polygon>
+          <!-- T2: pA<4 AND 20≤pE<50 — amber -->
+          <polygon points="260,96 252,111 312,225 320,210" fill="#d97706" opacity="0.88"></polygon>
+          <!-- T1: pA<4 AND pE<20 (excluding PD) ∪ 4≤pA<13 AND pE<15 — yellow -->
+          <polygon points="194,69 216,28 224,28 260,96 252,111 242,92 224,126" fill="#ca8a04" opacity="0.82"></polygon>
+          <!-- PD: pM≥98 (CH4 apex) — purple -->
+          <polygon points="220,20 216,28 224,28" fill="#9333ea" opacity="0.90"></polygon>
+          <!-- Triangle outer border -->
+          <polygon points="220,20 20,400 420,400" fill="none" stroke="#374151" stroke-width="2"></polygon>
+          <!-- Zone boundary lines (subtle) -->
+          <line x1="194" y1="69" x2="304" y2="400" stroke="#fff" stroke-width="0.8" stroke-dasharray="3,3" opacity="0.6"></line>
+          <line x1="240" y1="157" x2="368" y2="400" stroke="#fff" stroke-width="0.8" stroke-dasharray="3,3" opacity="0.6"></line>
+          <line x1="224" y1="126" x2="404" y2="400" stroke="#fff" stroke-width="0.8" stroke-dasharray="3,3" opacity="0.6"></line>
+          <line x1="242" y1="92" x2="404" y2="400" stroke="#fff" stroke-width="0.8" stroke-dasharray="3,3" opacity="0.6"></line>
+          <line x1="260" y1="96" x2="320" y2="210" stroke="#fff" stroke-width="0.8" stroke-dasharray="3,3" opacity="0.6"></line>
+          <line x1="208" y1="218" x2="240" y2="157" stroke="#fff" stroke-width="0.8" stroke-dasharray="3,3" opacity="0.6"></line>
+          <!-- Zone labels -->
+          <text x="105" y="330" text-anchor="middle" fill="white" font-size="14" font-weight="bold" font-family="sans-serif">D1</text>
+          <text x="105" y="348" text-anchor="middle" fill="white" font-size="9" font-family="sans-serif">Low Energy</text>
+          <text x="270" y="305" text-anchor="middle" fill="white" font-size="13" font-weight="bold" font-family="sans-serif">D2</text>
+          <text x="270" y="320" text-anchor="middle" fill="white" font-size="9" font-family="sans-serif">High Energy</text>
+          <text x="310" y="262" text-anchor="middle" fill="white" font-size="12" font-weight="bold" font-family="sans-serif">DT</text>
+          <text x="310" y="276" text-anchor="middle" fill="white" font-size="9" font-family="sans-serif">Mixed</text>
+          <text x="368" y="315" text-anchor="middle" fill="white" font-size="12" font-weight="bold" font-family="sans-serif">T3</text>
+          <text x="368" y="329" text-anchor="middle" fill="white" font-size="9" font-family="sans-serif">&gt;700°C</text>
+          <text x="285" y="165" text-anchor="middle" fill="white" font-size="12" font-weight="bold" font-family="sans-serif">T2</text>
+          <text x="285" y="179" text-anchor="middle" fill="white" font-size="9" font-family="sans-serif">300–700°C</text>
+          <text x="228" y="82" text-anchor="middle" fill="white" font-size="11" font-weight="bold" font-family="sans-serif">T1</text>
+          <text x="228" y="95" text-anchor="middle" fill="white" font-size="8" font-family="sans-serif">&lt;300°C</text>
+          <text x="220" y="34" text-anchor="middle" fill="white" font-size="8" font-weight="bold" font-family="sans-serif">PD</text>
+          <!-- Boundary value annotations -->
+          <text x="183" y="62" text-anchor="end" fill="#374151" font-size="9" font-family="sans-serif">C₂H₂=13%</text>
+          <text x="153" y="137" text-anchor="end" fill="#374151" font-size="9" font-family="sans-serif">C₂H₂=29%</text>
+          <text x="243" y="86" text-anchor="start" fill="#374151" font-size="9" font-family="sans-serif">C₂H₄=15%</text>
+          <text x="254" y="104" text-anchor="start" fill="#374151" font-size="9" font-family="sans-serif">C₂H₄=20%</text>
+          <text x="316" y="220" text-anchor="start" fill="#374151" font-size="9" font-family="sans-serif">C₂H₄=50%</text>
+          <!-- Corner axis labels -->
+          <text x="220" y="14" text-anchor="middle" fill="#1d4ed8" font-size="13" font-weight="bold" font-family="sans-serif">CH₄</text>
+          <text x="8" y="416" text-anchor="start" fill="#1d4ed8" font-size="13" font-weight="bold" font-family="sans-serif">C₂H₂</text>
+          <text x="452" y="416" text-anchor="end" fill="#1d4ed8" font-size="13" font-weight="bold" font-family="sans-serif">C₂H₄</text>
+          <!-- Axis direction arrows text -->
+          <text x="100" y="413" text-anchor="middle" fill="#6b7280" font-size="9" font-family="sans-serif">← %C₂H₂ increases</text>
+          <text x="345" y="413" text-anchor="middle" fill="#6b7280" font-size="9" font-family="sans-serif">%C₂H₄ increases →</text>
+          <text x="138" y="195" text-anchor="middle" fill="#6b7280" font-size="9" font-family="sans-serif" transform="rotate(-60,138,195)">%CH₄ increases →</text>
+        </svg>
+        <div style="font-size:11px;line-height:1.7;">
+          <div style="font-weight:600;margin-bottom:6px;color:#374151;">Zone Definitions (IEC 60599:2007)</div>
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;"><span style="display:inline-block;width:14px;height:14px;background:#9333ea;border-radius:2px;"></span> <b>PD</b> — Corona/Partial Discharge (CH₄≥98%)</div>
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;"><span style="display:inline-block;width:14px;height:14px;background:#ca8a04;border-radius:2px;"></span> <b>T1</b> — Low Temp Thermal (&lt;300°C)</div>
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;"><span style="display:inline-block;width:14px;height:14px;background:#d97706;border-radius:2px;"></span> <b>T2</b> — Thermal Fault (300–700°C)</div>
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;"><span style="display:inline-block;width:14px;height:14px;background:#f97316;border-radius:2px;"></span> <b>T3</b> — High Temp Thermal (&gt;700°C)</div>
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;"><span style="display:inline-block;width:14px;height:14px;background:#ea580c;border-radius:2px;"></span> <b>DT</b> — Mixed Elec+Thermal Fault</div>
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;"><span style="display:inline-block;width:14px;height:14px;background:#dc2626;border-radius:2px;"></span> <b>D2</b> — High Energy Discharge (Arcing)</div>
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:10px;"><span style="display:inline-block;width:14px;height:14px;background:#991b1b;border-radius:2px;"></span> <b>D1</b> — Low Energy Discharge</div>
+          <div style="border-top:1px solid #e5e7eb;padding-top:8px;color:#6b7280;font-size:10px;">
+            <b>How to read:</b><br>
+            Normalize CH₄, C₂H₄, C₂H₂ to 100%.<br>
+            Plot point on triangle → read zone.<br>
+            <b>Boundaries:</b> C₂H₂: 4%, 13%, 29%<br>
+            C₂H₄: 15%, 20%, 23%, 50% | CH₄: 98%
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div><!-- tab-content -->
+
+<!-- MODAL -->
+<div class="modal-overlay" id="detail-modal" onclick="closeModalOnOverlay(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 id="modal-title">Transformer Detail</h2>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="info-grid" id="modal-info-grid"></div>
+      <div class="modal-tabs">
+        <button class="modal-tab active" onclick="showModalTab('m-dga',this)">🧪 DGA</button>
+        <button class="modal-tab" onclick="showModalTab('m-phys',this)">🔬 Physical</button>
+        <button class="modal-tab" onclick="showModalTab('m-elec',this)">⚡ Electrical</button>
+        <button class="modal-tab" onclick="showModalTab('m-chem',this)">🧬 Chemical</button>
+        <button class="modal-tab" onclick="showModalTab('m-trend',this)">📈 Trend</button>
+        <button class="modal-tab" onclick="showModalTab('m-ai',this)">🤖 AI Analysis</button>
+      </div>
+      <div class="modal-panel active" id="m-dga"><div id="modal-dga-content"></div></div>
+      <div class="modal-panel" id="m-phys"><div id="modal-phys-content"></div></div>
+      <div class="modal-panel" id="m-elec"><div id="modal-elec-content"></div></div>
+      <div class="modal-panel" id="m-chem"><div id="modal-chem-content"></div></div>
+      <div class="modal-panel" id="m-trend">
+        <!-- Sub-tabs for trend -->
+        <div class="modal-sub-tabs">
+          <button class="modal-sub-tab active" onclick="showModalSubTab('mt-dga',this)">DGA Gases</button>
+          <button class="modal-sub-tab" onclick="showModalSubTab('mt-phys',this)">Physical</button>
+          <button class="modal-sub-tab" onclick="showModalSubTab('mt-elec',this)">Electrical</button>
+          <button class="modal-sub-tab" onclick="showModalSubTab('mt-chem',this)">Chemical</button>
+        </div>
+        <div class="modal-sub-panel active" id="mt-dga"><div class="modal-chart-grid" id="modal-trend-dga"></div></div>
+        <div class="modal-sub-panel" id="mt-phys"><div class="modal-chart-grid" id="modal-trend-phys"></div></div>
+        <div class="modal-sub-panel" id="mt-elec"><div class="modal-chart-grid" id="modal-trend-elec"></div></div>
+        <div class="modal-sub-panel" id="mt-chem"><div class="modal-chart-grid" id="modal-trend-chem"></div></div>
+      </div>
+      <div class="modal-panel" id="m-ai"><div id="modal-ai-content"></div></div>
+    </div>
+  </div>
+</div>
+
+<div style="text-align:center;font-size:11px;color:var(--text2);padding:12px;">
+  Transformer Oil Analysis Dashboard v5.0 (Upload Template) | Data Entry Group Co., Ltd. | SKIC-BP Apr 2025
+</div>
+
+<script src="app.js"></script>
+</div><!-- /dashboard-root -->
+
+</div><div id="save-toast" class="save-toast show" style="white-space: pre-line;">⏳ กำลังสร้างไฟล์ HTML...</div></body></html>
