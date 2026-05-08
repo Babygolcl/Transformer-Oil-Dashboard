@@ -569,6 +569,7 @@ function renderModalDGA(d) {
       <div class="r-limit">${lim}${cond?` <b style="color:${condCol}"> ${cond}</b>`:''}</div>
     </div>`;
   });
+  html += '</div>'; // Close result-grid
   
   // Duval Triangle
   const duvalNode = document.getElementById('duval-svg').cloneNode(true);
@@ -621,7 +622,7 @@ function renderModalDGA(d) {
     </div>`;
   }
 
-  document.getElementById('modal-dga-content').innerHTML=html+'</div>';
+  document.getElementById('modal-dga-content').innerHTML=html;
 }
 function renderModalPhys(d) {
   document.getElementById('modal-phys-content').innerHTML=`<div class="result-grid">
