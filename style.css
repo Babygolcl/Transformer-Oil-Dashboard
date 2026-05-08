@@ -293,6 +293,11 @@ body {
 .modal-sub-tab:hover { background: rgba(255,255,255,0.1); color: var(--text); }
 .modal-sub-tab.active { background: rgba(59, 130, 246, 0.2); color: #60a5fa; border-color: rgba(59, 130, 246, 0.5); }
 
+.modal-panel { display: none; animation: fadeIn 0.3s ease; }
+.modal-panel.active { display: block; }
+.modal-sub-panel { display: none; animation: fadeIn 0.3s ease; }
+.modal-sub-panel.active { display: block; }
+
 /* AI Analysis Cards */
 .ai-issue { border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin-bottom: 16px; background: rgba(255,255,255,0.02); }
 .ai-issue.extreme { border-color: rgba(239, 68, 68, 0.4); background: rgba(239, 68, 68, 0.05); box-shadow: inset 0 2px 12px rgba(239,68,68,0.05); }
