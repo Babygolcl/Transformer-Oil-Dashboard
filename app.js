@@ -642,8 +642,8 @@ function renderModalChem(d) {
     ${ri('Moisture (ASTM D1533)',d.moisture_ppm,' ppm',35,false,'ASTM D1533')}
     ${d.water_in_oil_pct!=null?ri('Water in Oil % Saturation (IEEE 62-1995)',d.water_in_oil_pct,'%',30,false,'IEEE 62-1995'):''}
     ${d.water_in_paper_pct!=null?ri('Water in Paper % Moisture (IEEE 62-1995)',d.water_in_paper_pct,'%',4,false,'IEEE 62-1995'):''}</div>
-    ${d.water_in_oil_pct!=null?`<div style="margin-top:6px;padding:6px 12px;background:#eff6ff;border-radius:6px;font-size:12px;">💧 Water in Oil: <b>${fmt(d.water_in_oil_pct,1)}%</b> → <b>${woWet}</b> | Paper: <b>${fmt(d.water_in_paper_pct,2)}%</b> → <b>${wpWet}</b></div>`:''}
-    <div style="margin-top:6px;padding:8px 12px;background:#f0fdf4;border-radius:6px;font-size:12px;">
+    ${d.water_in_oil_pct!=null?`<div style="margin-top:12px;padding:10px 14px;background:rgba(59,130,246,0.1);border:1px solid rgba(59,130,246,0.3);border-radius:8px;font-size:13px;color:#e0f2fe;">💧 Water in Oil: <b style="color:#60a5fa">${fmt(d.water_in_oil_pct,1)}%</b> → <b>${woWet}</b> &nbsp;|&nbsp; Paper: <b style="color:#60a5fa">${fmt(d.water_in_paper_pct,2)}%</b> → <b>${wpWet}</b></div>`:''}
+    <div style="margin-top:8px;padding:10px 14px;background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.3);border-radius:8px;font-size:13px;color:#d1fae5;">
     📋 ${d.recommendation_summary||'Continue normal operation and oil testing according to normal process'}</div>`;
 }
 
