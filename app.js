@@ -10,7 +10,6 @@ const LIMITS = {
 const GAS_COLORS = {H2:'#4C72B0',CO:'#DD8452',CO2:'#2ca02c',CH4:'#C44E52',C2H4:'#8172B3',C2H2:'#d62728',C2H6:'#DA8BC3',TDCG:'#1f77b4',C3H6:'#bcbd22',C3H8:'#17becf'};
 const COND_COLORS = {Normal:'#16a34a',Caution:'#ca8a04',Warning:'#ea580c',Critical:'#dc2626'};
 
-let currentData = [...RAW_DATA];
 let mainCharts = {};
 let trendCharts = {};
 let modalCharts = {};
