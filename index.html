@@ -95,6 +95,7 @@
   <button class="tab" onclick="showTab('chemical',this)">🧬 Chemical Tests</button>
   <button class="tab" onclick="showTab('trend',this)">📈 Trend Analysis</button>
   <button class="tab" onclick="showTab('ai',this)">🤖 AI Analysis</button>
+  <button class="tab" onclick="showTab('duval',this)">📐 Duval Triangle</button>
   <button class="tab" onclick="showTab('standards',this)">📋 Standards</button>
 </div>
 
@@ -762,8 +763,12 @@
         <tr><td>&gt;4%</td><td class="c4">Extremely Wet</td></tr>
       </tbody></table>
     </div>
-    <!-- DUVAL TRIANGLE SVG -->
-    <div class="std-card" style="grid-column:span 2;">
+  </div>
+</div>
+
+<!-- DUVAL TRIANGLE -->
+<div class="tab-panel" id="panel-duval">
+  <div class="std-card">
       <h3>📐 Duval Triangle 1 — IEC 60599:2007 Fault Zone Diagram</h3>
       <div style="display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap;">
         <svg id="duval-svg" viewBox="0 0 460 430" width="420" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0;border:1px solid #e5e7eb;border-radius:6px;background:#fafafa;">
@@ -840,7 +845,6 @@
       </div>
     </div>
   </div>
-</div>
 </div><!-- tab-content -->
 
 <!-- MODAL -->
