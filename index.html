@@ -45,7 +45,7 @@
       <select id="f-equipment" onchange="applyFilters()"><option value="all">All Transformers (36)</option><option value="Unit Sub 2">[1] Unit Sub 2 (4511428)</option><option value="Mill Supply">[2] Mill Supply (59134576EE)</option><option value="TR MSP#8-10">[3] TR MSP#8-10 (5612179)</option><option value="DWP#14-17">[4] DWP#14-17 (5612181)</option><option value="DWP#8-12">[5] DWP#8-12 (4810091)</option><option value="DWP#1-3">[6] DWP#1-3 (3710028)</option><option value="TG#12">[7] TG#12 (57051)</option><option value="12T3">[8] 12T3 (3612510)</option><option value="12T2">[9] 12T2 (3612509)</option><option value="12T1">[10] 12T1 (3612508)</option><option value="TA7">[11] TA7 (5810749)</option><option value="TA2">[12] TA2 (3712215)</option><option value="AIR COMP1">[13] AIR COMP1 (3410570)</option><option value="SHRD#2">[14] SHRD#2 (3410089)</option><option value="TG#11">[15] TG#11 (5011918)</option><option value="11T3 PB#11">[16] 11T3 PB#11 (5711579)</option><option value="11T2 PB#11">[17] 11T2 PB#11 (5196355)</option><option value="11T1 PB#11">[18] 11T1 PB#11 (6011735)</option><option value="BUS 1A">[19] BUS 1A (360351)</option><option value="TR-Service BUS1,2,3">[20] TR-Service BUS1,2,3 (5110001)</option><option value="T5 Station BUS DS">[21] T5 Station BUS DS (3912540)</option><option value="TR#2">[22] TR#2 (607034)</option><option value="TR#3">[23] TR#3 (60976)</option><option value="TR#2 BUS2">[24] TR#2 BUS2 (3910714)</option><option value="TR#1 BUS1">[25] TR#1 BUS1 (3910715)</option><option value="1T1BAT TG#17">[26] 1T1BAT TG#17 (60143706EE)</option><option value="PB-TX-03 PB#19">[27] PB-TX-03 PB#19 (5612165)</option><option value="PB-TX-02 PB#19">[28] PB-TX-02 PB#19 (5612164)</option><option value="PB-TX-01 PB#19">[29] PB-TX-01 PB#19 (5612162)</option><option value="TG#16">[30] TG#16 (4912056)</option><option value="TR3 PB#16">[31] TR3 PB#16 (4912059)</option><option value="TR2 PB#16">[32] TR2 PB#16 (4912058)</option><option value="TR1 PB#16">[33] TR1 PB#16 (4912057)</option><option value="TG#19">[34] TG#19 (6012307)</option><option value="TR2 WTE">[35] TR2 WTE (60143141EE)</option><option value="TR1 WTE">[36] TR1 WTE (60143142EE)</option></select>
     </div>
     <div class="filter-group"><label>DGA Condition:</label>
-      <select id="f-condition" onchange="applyFilters()">
+      <select id="f-condition" onchange="activeTileFilter=null; applyFilters()">
         <option value="all">All Conditions</option>
         <option value="Normal">🟢 Normal (C1)</option>
         <option value="Caution">🟡 Caution (C2 | 721–1920 ppm)</option>
@@ -54,17 +54,17 @@
       </select>
     </div>
     <div class="filter-group"><label>Physical:</label>
-      <select id="f-physical" onchange="applyFilters()">
+      <select id="f-physical" onchange="activeTileFilter=null; applyFilters()">
         <option value="all">All</option><option value="over">Over Limit</option><option value="ok">Within Limit</option>
       </select>
     </div>
     <div class="filter-group"><label>Electrical:</label>
-      <select id="f-electrical" onchange="applyFilters()">
+      <select id="f-electrical" onchange="activeTileFilter=null; applyFilters()">
         <option value="all">All</option><option value="over">Over Limit</option><option value="ok">Within Limit</option>
       </select>
     </div>
     <div class="filter-group"><label>Chemical:</label>
-      <select id="f-chemical" onchange="applyFilters()">
+      <select id="f-chemical" onchange="activeTileFilter=null; applyFilters()">
         <option value="all">All</option><option value="over">Over Limit</option><option value="ok">Within Limit</option>
       </select>
     </div>
@@ -78,12 +78,12 @@
 
 <!-- KPI -->
 <div class="kpi-row">
-  <div class="kpi-card"><div class="kpi-label">Total Transformers</div><div class="kpi-value" id="kpi-total">36</div><div class="kpi-sub">SKIC-BP | Mar 2025</div></div>
-  <div class="kpi-card normal"><div class="kpi-label">Normal (DGA)</div><div class="kpi-value normal" id="kpi-normal">33</div><div class="kpi-sub">Condition 1 (IEEE C57.104)</div></div>
-  <div class="kpi-card" style="border-color:#ca8a04"><div class="kpi-label">Caution (DGA)</div><div class="kpi-value" style="color:#ca8a04" id="kpi-monitor">3</div><div class="kpi-sub">C2 — TDCG 721–1920 ppm</div></div>
-  <div class="kpi-card serious"><div class="kpi-label">Warning/Critical</div><div class="kpi-value serious" id="kpi-serious">0</div><div class="kpi-sub">C3–C4 — Investigate (TDCG &gt;1920)</div></div>
-  <div class="kpi-card" style="border-color:#f59e0b"><div class="kpi-label">Phys/Elec Over Limit</div><div class="kpi-value" style="color:#f59e0b" id="kpi-phys">5</div><div class="kpi-sub">Color/IFT (Phys) | DBV/DF (Elec)</div></div>
-  <div class="kpi-card" style="border-color:#7c3aed"><div class="kpi-label">Requires Action</div><div class="kpi-value" style="color:#7c3aed" id="kpi-action">35</div><div class="kpi-sub">Any parameter over limit</div></div>
+  <div class="kpi-card" id="tile-all" onclick="applyTileFilter(null)" style="cursor:pointer"><div class="kpi-label">Total Transformers</div><div class="kpi-value" id="kpi-total">36</div><div class="kpi-sub">SKIC-BP | Mar 2025</div></div>
+  <div class="kpi-card normal" id="tile-normal_dga" onclick="applyTileFilter('normal_dga')" style="cursor:pointer"><div class="kpi-label">Normal (DGA)</div><div class="kpi-value normal" id="kpi-normal">33</div><div class="kpi-sub">Condition 1 (IEEE C57.104)</div></div>
+  <div class="kpi-card" id="tile-caution_dga" onclick="applyTileFilter('caution_dga')" style="cursor:pointer;border-color:#ca8a04"><div class="kpi-label">Caution (DGA)</div><div class="kpi-value" style="color:#ca8a04" id="kpi-monitor">3</div><div class="kpi-sub">C2 — TDCG 721–1920 ppm</div></div>
+  <div class="kpi-card serious" id="tile-warn_crit_dga" onclick="applyTileFilter('warn_crit_dga')" style="cursor:pointer"><div class="kpi-label">Warning/Critical</div><div class="kpi-value serious" id="kpi-serious">0</div><div class="kpi-sub">C3–C4 — Investigate (TDCG &gt;1920)</div></div>
+  <div class="kpi-card" id="tile-phys_elec" onclick="applyTileFilter('phys_elec')" style="cursor:pointer;border-color:#f59e0b"><div class="kpi-label">Phys/Elec Over Limit</div><div class="kpi-value" style="color:#f59e0b" id="kpi-phys">5</div><div class="kpi-sub">Color/IFT (Phys) | DBV/DF (Elec)</div></div>
+  <div class="kpi-card" id="tile-action" onclick="applyTileFilter('action')" style="cursor:pointer;border-color:#7c3aed"><div class="kpi-label">Requires Action</div><div class="kpi-value" style="color:#7c3aed" id="kpi-action">35</div><div class="kpi-sub">Any parameter over limit</div></div>
 </div>
 
 <!-- TABS -->

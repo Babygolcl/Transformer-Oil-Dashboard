@@ -134,6 +134,24 @@ function populateEquipmentFilter() {
   while(sel.options.length>1) sel.remove(1);
   RAW_DATA.forEach(d=>{const o=document.createElement('option');o.value=d.equipment_id;o.textContent=`[${d.no}] ${d.equipment_id} (${d.serial_no})`;sel.appendChild(o);});
 }
+
+let activeTileFilter = null;
+
+function applyTileFilter(type) {
+  // Clear dropdowns
+  ['f-equipment','f-condition','f-physical','f-electrical','f-chemical'].forEach(id=>document.getElementById(id).value='all');
+  activeTileFilter = type;
+  
+  // Highlight tile
+  document.querySelectorAll('.kpi-card').forEach(el=>el.classList.remove('active-tile'));
+  if(type) {
+    const tile = document.getElementById('tile-'+type);
+    if(tile) tile.classList.add('active-tile');
+  }
+  
+  applyFilters();
+}
+
 function applyFilters() {
   const eq=document.getElementById('f-equipment').value;
   const cond=document.getElementById('f-condition').value;
@@ -152,11 +170,21 @@ function applyFilters() {
     // Chemical: Acidity, Moisture, Water
     const chemOver=(d.acidity!=null&&d.acidity>0.20)||(d.moisture_ppm!=null&&d.moisture_ppm>35)||(d.water_in_oil_pct!=null&&d.water_in_oil_pct>20)||(d.water_in_paper_pct!=null&&d.water_in_paper_pct>2);
     if(chem==='over'&&!chemOver) return false; if(chem==='ok'&&chemOver) return false;
+    
+    // Tile filters
+    if(activeTileFilter==='normal_dga' && getTDCGCondition(d)!=='Normal') return false;
+    if(activeTileFilter==='caution_dga' && getTDCGCondition(d)!=='Caution') return false;
+    if(activeTileFilter==='warn_crit_dga' && getTDCGCondition(d)!=='Warning' && getTDCGCondition(d)!=='Critical') return false;
+    if(activeTileFilter==='phys_elec' && !(physOver || elecOver)) return false;
+    if(activeTileFilter==='action' && getIssues(d).length===0) return false;
+    
     return true;
   });
   updateAllCharts();updateKPIs();updateOverviewTable();
 }
 function resetFilters() {
+  activeTileFilter = null;
+  document.querySelectorAll('.kpi-card').forEach(el=>el.classList.remove('active-tile'));
   ['f-equipment','f-condition','f-physical','f-electrical','f-chemical'].forEach(id=>document.getElementById(id).value='all');
   currentData=[...RAW_DATA];updateAllCharts();updateKPIs();updateOverviewTable();
 }
