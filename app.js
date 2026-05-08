@@ -274,6 +274,44 @@ function updateAllCharts() {
   makeHorizBar('chart-moisture',labels,currentData.map(d=>d.moisture_ppm),[35],' ppm',false);
   makeHorizBar('chart-water-oil',labels,currentData.map(d=>d.water_in_oil_pct),[5,20,30],'%',false);
   makeHorizBar('chart-water-paper',labels,currentData.map(d=>d.water_in_paper_pct),[2,4],'%',false);
+  updateDuvalPlot();
+}
+
+function updateDuvalPlot() {
+  const svg = document.getElementById('duval-svg');
+  if(!svg) return;
+  
+  svg.querySelectorAll('.duval-dot').forEach(el=>el.remove());
+
+  currentData.forEach(d => {
+    const ch4=d.CH4||0, c2h4=d.C2H4||0, c2h2=d.C2H2||0;
+    const total=ch4+c2h4+c2h2;
+    if(total<1) return;
+    
+    const pM=ch4/total*100, pE=c2h4/total*100, pA=c2h2/total*100;
+    const x = (pM * 220 + pE * 420 + pA * 20) / 100;
+    const y = (pM * 20 + pE * 400 + pA * 400) / 100;
+    
+    const isFault = (ch4>120 || c2h4>50 || c2h2>1);
+    
+    const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    circle.setAttribute('cx', x);
+    circle.setAttribute('cy', y);
+    circle.setAttribute('r', '5');
+    circle.setAttribute('fill', isFault ? '#dc2626' : '#10b981');
+    circle.setAttribute('stroke', '#ffffff');
+    circle.setAttribute('stroke-width', '1.5');
+    circle.setAttribute('class', 'duval-dot');
+    circle.style.cursor = 'pointer';
+    
+    const title = document.createElementNS('http://www.w3.org/2000/svg', 'title');
+    title.textContent = `[${d.no}] ${d.equipment_id}\nCH4: ${pM.toFixed(1)}%\nC2H4: ${pE.toFixed(1)}%\nC2H2: ${pA.toFixed(1)}%\n${isFault?'Fault Area':'Normal'}`;
+    circle.appendChild(title);
+    
+    circle.onclick = () => openModal(d.no);
+    
+    svg.appendChild(circle);
+  });
 }
 
 // === TREND LINE CHART BUILDER ===
