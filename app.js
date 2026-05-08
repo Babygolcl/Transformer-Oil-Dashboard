@@ -569,6 +569,58 @@ function renderModalDGA(d) {
       <div class="r-limit">${lim}${cond?` <b style="color:${condCol}"> ${cond}</b>`:''}</div>
     </div>`;
   });
+  
+  // Duval Triangle
+  const duvalNode = document.getElementById('duval-svg').cloneNode(true);
+  if(duvalNode) {
+    duvalNode.removeAttribute('id');
+    duvalNode.style.background = 'transparent';
+    duvalNode.querySelectorAll('.duval-dot').forEach(el=>el.remove());
+
+    const ch4=d.CH4||0, c2h4=d.C2H4||0, c2h2=d.C2H2||0;
+    const total=ch4+c2h4+c2h2;
+    if(total>=1) {
+      const pM=ch4/total*100, pE=c2h4/total*100, pA=c2h2/total*100;
+      const x = (pM * 220 + pE * 420 + pA * 20) / 100;
+      const y = (pM * 20 + pE * 400 + pA * 400) / 100;
+      const isFault = (ch4>120 || c2h4>50 || c2h2>1);
+      
+      const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      circle.setAttribute('cx', x);
+      circle.setAttribute('cy', y);
+      circle.setAttribute('r', '7');
+      circle.setAttribute('fill', isFault ? '#dc2626' : '#10b981');
+      circle.setAttribute('stroke', '#ffffff');
+      circle.setAttribute('stroke-width', '2');
+      duvalNode.appendChild(circle);
+      
+      const dt = getDuvalFaultType(d);
+      if(dt && dt.code!=='N/A') {
+        const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        text.setAttribute('x', x + 12);
+        text.setAttribute('y', y + 4);
+        text.setAttribute('fill', '#ffffff');
+        text.setAttribute('font-size', '14');
+        text.setAttribute('font-weight', 'bold');
+        text.setAttribute('filter', 'drop-shadow(0px 2px 2px rgba(0,0,0,0.8))');
+        text.textContent = dt.code;
+        duvalNode.appendChild(text);
+      }
+    }
+
+    const dtInfo = getDuvalFaultType(d);
+    const dtText = dtInfo ? dtInfo.label : 'ข้อมูลแก๊สไม่เพียงพอ (CH4+C2H4+C2H2 < 1 ppm)';
+    const dtColor = dtInfo && dtInfo.code !== 'N/A' ? dtInfo.color : '#16a34a';
+
+    html += `<div style="margin-top:24px;background:rgba(255,255,255,0.02);padding:24px;border-radius:12px;border:1px solid var(--border);display:flex;flex-wrap:wrap;gap:24px;align-items:center;">
+      <div style="flex:1;min-width:300px;text-align:center;">
+        <h3 style="font-size:16px;color:var(--text);margin-bottom:8px;">📐 Duval Triangle 1 (IEC 60599:2007)</h3>
+        <div style="font-size:14px;color:${dtColor};font-weight:700;margin-bottom:20px;">${dtText}</div>
+        <div style="display:inline-block;background:rgba(0,0,0,0.2);padding:16px;border-radius:12px;border:1px solid var(--border);">${duvalNode.outerHTML}</div>
+      </div>
+    </div>`;
+  }
+
   document.getElementById('modal-dga-content').innerHTML=html+'</div>';
 }
 function renderModalPhys(d) {
